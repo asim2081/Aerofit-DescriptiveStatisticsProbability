@@ -1,0 +1,342 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+df=pd.read_csv("aerofit_treadmill.txt")
+df
+
+# 1. Defining Problem Statement and Analysing basic metrics
+
+df.head()
+
+df.tail()
+
+df.shape
+
+df.columns
+
+df.info()
+
+df.nunique()
+
+df.duplicated().sum()
+
+df.describe()
+
+df.describe(include="object")
+
+# There are no missing values in the data. There are 3 unique products in the dataset. KP281 is the most frequent product: 80/180. 
+# Minimum & Maximum age of the person is 18 & 50, mean is 28.79 and 75% of persons have age less than or equal to 33 & median age is 26.
+# Most of the people are having 16 years of education i.e. 75% of persons are having education <= 16 years. Min education is 12 years & max is 21 years. 
+# Out of 180 data points, 104's gender is Male and rest are the female. And 107 respondants are partnered. 
+# Standard deviation for Income & Miles is very high. These variables might have the outliers in it.
+
+## 2. Non-Graphical Analysis: Value counts and unique attributes
+
+df.nunique()
+
+product_count = df["Product"].value_counts().reset_index()
+product_count.columns = ["Product_Name", "Count"]
+product_count["%_of_total"]=round(product_count["Count"]*100/df.shape[0],2)
+product_count
+
+gender_count = df["Gender"].value_counts().reset_index()
+gender_count.columns = ["Gender", "Count"]
+gender_count["%_of_total"]=round(gender_count["Count"]*100/df.shape[0],2)
+gender_count
+
+marital_status_count = df["MaritalStatus"].value_counts().reset_index()
+marital_status_count.columns = ["MaritalStatus", "Count"]
+marital_status_count["%_of_total"]=round(marital_status_count["Count"]*100/df.shape[0],2)
+marital_status_count
+marital_status_count
+
+Fitness_count = df["Fitness"].value_counts().reset_index()
+Fitness_count.columns = ["Fitness", "Count"]
+Fitness_count["%_of_total"]=round(Fitness_count["Count"]*100/df.shape[0],2)
+Fitness_count
+Fitness_count
+Fitness_count
+
+age_count = df["Age"].value_counts().reset_index()
+age_count.columns = ["Age", "Count"]
+age_count["%_of_total"]=round(age_count["Count"]*100/df.shape[0],2)
+age_count
+age_count
+age_count
+
+education_count = df["Education"].value_counts().reset_index()
+education_count.columns = ["Education", "Count"]
+education_count["%_of_total"]=round(education_count["Count"]*100/df.shape[0],2)
+education_count
+education_count
+education_count
+
+usage_count = df["Usage"].value_counts().reset_index()
+usage_count.columns = ["Usage", "Count"]
+usage_count["%_of_total"]=round(usage_count["Count"]*100/df.shape[0],2)
+usage_count
+usage_count
+usage_count
+
+pd.crosstab(df["Gender"],df["Product"])
+
+pd.crosstab(df["Product"],df["Age"])
+
+pd.crosstab(df["MaritalStatus"],df["Product"])
+
+pd.crosstab(df["Fitness"],df["Product"])
+
+pd.crosstab(df["Usage"],df["Product"])
+
+# There are 3 unique products, 1 to 5 fitness rating, in the dataset. 
+#KP281 is the most frequent product: 44.44%. 
+#Minimum & Maximum age of the person is 18 & 50, mean is 28.79 and 75% of persons have age less than or equal to 33 & median age is 26. 
+#Most of the people are having 16 years of education-47.22% also 75% of persons are having education <= 16 years. Min education is 12 years & max is 21 years. 
+#Out of 180 data points, 104's gender is Male 57.78% and rest are the female 42.22%. And 107(59.44%) respondants are partnered. 
+#On fitness scale most of the respondats 53.89% rate themselves on 3.
+#The maximum usage of tredmill 3 times a week by 38.33% respondatnts and only 1.11% users uses tredmill daily.
+
+
+## 3. Visual Analysis - Univariate & Bivariate
+# 3.1 For continuous variable(s): Distplot, countplot, histogram for univariate analysis
+
+fig, axis = plt.subplots(nrows=3, ncols=2, figsize=(10, 8))
+fig.subplots_adjust(top=1.2)
+sns.histplot(data=df, x="Age", kde=True, ax=axis[0,0])
+sns.histplot(data=df, x="Education", kde=True, ax=axis[0,1])
+sns.histplot(data=df, x="Usage", kde=True, ax=axis[1,0])
+sns.histplot(data=df, x="Fitness", kde=True, ax=axis[1,1])
+sns.histplot(data=df, x="Income", kde=True, ax=axis[2,0])
+sns.histplot(data=df, x="Miles", kde=True, ax=axis[2,1])
+plt.show()
+
+plt.figure(figsize=(4,4))
+df['Product'].value_counts().plot(kind='pie',autopct="%.2f%%")
+plt.title("Product Distribution")
+
+plt.figure(figsize=(4,4))
+df['Gender'].value_counts().plot(kind='pie',autopct="%.2f%%")
+plt.title("Gender Distribution")
+
+plt.figure(figsize=(4,4))
+df['Fitness'].value_counts().plot(kind='pie',autopct="%.2f%%")
+plt.title("Fitness Distribution")
+
+plt.figure(figsize=(6,4))
+sns.countplot(x='MaritalStatus',data=df)
+
+plt.figure(figsize = (6, 4))  
+sns.countplot(data=df, x='Age')
+plt.xticks(rotation=90)
+plt.show()
+
+plt.figure(figsize = (6, 4))
+sns.countplot(data=df, x="Product", hue="Gender")
+
+plt.figure(figsize = (6, 4))
+sns.countplot(data=df, x="MaritalStatus", hue="Product")
+
+plt.figure(figsize = (6, 4))
+sns.histplot(data=df, x="Age", hue="Product")
+
+plt.figure(figsize = (6, 4))
+sns.histplot(data=df, x="Income", hue="Product")
+
+plt.figure(figsize = (6, 4))
+sns.countplot(data=df, x="Usage", hue="Product")
+
+plt.figure(figsize = (6, 4))
+sns.countplot(data=df, x="Usage", hue="Gender")
+
+plt.figure(figsize = (6, 4))
+sns.countplot(data=df, x="Fitness", hue="Product")
+
+plt.figure(figsize = (6, 4))
+sns.countplot(data=df, x="Fitness", hue="Gender")
+
+
+#3.2 For categorical variable(s): Boxplot
+
+feat = ["Age","Education","Usage","Fitness","Income","Miles"]
+fig,axs = plt.subplots(nrows = 2,ncols = 3,figsize = (18,10))
+fig.subplots_adjust(top=1.2)
+count=0
+for i in range(2) :
+    for j in range(3) :
+        sns.boxplot(data=df,x="Product",y=feat[count],ax=axs[i,j],palette="Set3")
+        axs[i,j].set_title(f"Product vs {feat[count]}",pad=12,fontsize=14)
+        count+=1
+
+attrs = ['Age', 'Education', 'Usage', 'Fitness', 'Income', 'Miles']
+sns.set_style("white")
+fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(18, 12))
+fig.subplots_adjust(top=1.3)
+count = 0
+for i in range(3):
+    for j in range(2):
+        sns.boxplot(data=df, x='Gender', y=attrs[count], hue='Product', ax=axs[i,j], palette='Set3')
+        axs[i,j].set_title(f"Product vs {attrs[count]}", pad=12, fontsize=13)
+        count += 1
+
+
+#3.3 For correlation: Heatmaps, Pairplots
+
+sns.pairplot(data=df,hue="Product")
+
+data=df.drop(['Gender','MaritalStatus'],axis=1)
+data
+
+plt.figure(figsize=(8, 6))
+sns.heatmap(data.corr(), annot=True)
+plt.show()
+
+
+#Product vs Age
+    #Customers purchasing products KP281 & KP481 are having same Age median value. 
+    # Customers whose age lies between 25-30, are more likely to buy KP781 product
+
+#Product vs Education
+    #Customers whose Education is greater than 16, have more chances to purchase the KP781 product. 
+    # While the customers with Education less than 16 have equal chances of purchasing KP281 or KP481.
+
+#Product vs Usage
+    #Customers who are planning to use the treadmill greater than 4 times a week, are more likely to purchase the KP781 product. 
+    # While the other customers are likely to purchasing KP281 or KP481.
+
+#Product vs Fitness
+    #The more the customer is fit (fitness >= 3), higher the chances of the customer to purchase the KP781 product. 
+    # Product vs Income Higher the Income of the customer (Income >= 60000), higher the chances of the customer to purchase the KP781 product.
+
+#Product vs Miles
+    #If the customer expects to walk/run greater than 120 Miles per week, it is more likely that the customer will buy KP781 product.
+
+#Product vs Gender
+    #Equal number of males and females have purchased KP281 product and Almost same for the product KP481 Most of the Male customers have purchased the KP781 product.
+
+#Product vs MaritalStatus
+    #Customer who is Partnered, is more likely to purchase the product.
+
+
+
+# 4. Missing Value & Outlier Detection
+
+plt.figure(figsize=(6, 3))
+sns.boxplot(data=df,x='Age')
+
+df[df["Age"]>47].shape[0]
+
+plt.figure(figsize=(6, 3))
+sns.boxplot(data=df, x='Income')
+
+df[df["Income"]>80000].shape[0]
+
+plt.figure(figsize=(6, 3))
+sns.boxplot(data=df, x='Education')
+
+df[df["Education"]>18].shape[0]
+
+plt.figure(figsize=(6, 3))
+sns.boxplot(data=df,x='Usage')
+
+df[df["Usage"]>5].shape[0]
+
+plt.figure(figsize=(6, 3))
+sns.boxplot(data=df,x='Fitness')
+
+df[df["Fitness"]<2].shape[0]
+
+plt.figure(figsize=(6, 3))
+sns.boxplot(data=df,x='Miles')
+
+df[df["Miles"]>180].shape[0]
+
+# Income has 19 outlier i.e more than 10% and Miles has 13 outliers(7.22%). 
+# All the other attributes has has very laow outliers: 1.11% to 5%.
+
+
+# Marginal and Conditional Probabilities
+
+dff=pd.read_csv("aerofit_treadmill.txt")
+
+product_prob = dff["Product"].value_counts().reset_index()
+product_prob.columns = ["Product_Name", "Count"]
+product_prob["Probability"]=round(product_prob["Count"]/df.shape[0],2)
+product_prob
+
+gender_prob = df["Gender"].value_counts().reset_index()
+gender_prob.columns = ["Gender", "Count"]
+gender_prob["Probability"]=round(gender_prob["Count"]/df.shape[0],2)
+gender_prob
+
+marital_status_prob = df["MaritalStatus"].value_counts().reset_index()
+marital_status_prob.columns = ["MaritalStatus", "Count"]
+marital_status_prob["Probability"]=round(marital_status_prob["Count"]/df.shape[0],2)
+marital_status_prob
+marital_status_prob
+
+Fitness_prob = df["Fitness"].value_counts().reset_index()
+Fitness_prob.columns = ["Fitness", "Count"]
+Fitness_prob["Probability"]=round(Fitness_prob["Count"]/df.shape[0],2)
+Fitness_prob
+Fitness_prob
+Fitness_prob
+
+usage_prob = df["Usage"].value_counts().reset_index()
+usage_prob.columns = ["Usage", "Count"]
+usage_prob["Probability"]=round(usage_prob["Count"]/df.shape[0],2)
+usage_prob
+usage_prob
+usage_prob
+
+education_prob = df["Education"].value_counts().reset_index()
+education_prob.columns = ["Education", "Count"]
+education_prob["Probability"]=round(education_prob["Count"]/df.shape[0],2)
+education_prob
+education_prob
+education_prob
+
+def p_prod_given_gender(gender, print_marginal=False):
+    if gender is not "Female" and gender is not "Male":
+        return "Invalid gender value."
+    df1 = pd.crosstab(index=dff['Gender'], columns=[dff['Product']])
+    p_781 = df1['KP781'][gender] / df1.loc[gender].sum()
+    p_481 = df1['KP481'][gender] / df1.loc[gender].sum()
+    p_281 = df1['KP281'][gender] / df1.loc[gender].sum()
+    if print_marginal:
+        print(f"P(Male): {df1.loc['Male'].sum()/len(dff):.2f}")
+        print(f"P(Female): {df1.loc['Female'].sum()/len(dff):.2f}\n")
+    print(f"P(KP781/{gender}): {p_781:.2f}")
+    print(f"P(KP481/{gender}): {p_481:.2f}")
+    print(f"P(KP281/{gender}): {p_281:.2f}\n")
+p_prod_given_gender('Male', True)
+p_prod_given_gender('Female')
+
+
+def p_prod_given_mstatus(status, print_marginal=False):
+    if status is not "Single" and status is not "Partnered":
+        return "Invalid marital status value."
+    df1 = pd.crosstab(index=dff['MaritalStatus'], columns=[dff['Product']])
+    p_781 = df1['KP781'][status] / df1.loc[status].sum()
+    p_481 = df1['KP481'][status] / df1.loc[status].sum()
+    p_281 = df1['KP281'][status] / df1.loc[status].sum()
+    if print_marginal:
+        print(f"P(Single): {df1.loc['Single'].sum()/len(dff):.2f}")
+        print(f"P(Partnered): {df1.loc['Partnered'].sum()/len(dff):.2f}\n")
+    print(f"P(KP781/{status}): {p_781:.2f}")
+    print(f"P(KP481/{status}): {p_481:.2f}")
+    print(f"P(KP281/{status}): {p_281:.2f}\n")   
+p_prod_given_mstatus('Single', True)
+p_prod_given_mstatus('Partnered')
+
+
+#58% of customers are male and 42% of the customers are female.
+#Out of all males 32% bought KP781 , 30% bought KP481 , 38% bought KP281.
+#Out of all females 9% bought KP781 , 38% bought KP481 , 53% bought KP281.
+#Out of all the customers 41% is single and 59% is partnered.
+#Out of all the customers who are single 23% bought KP781,33% bought KP481,44% bought KP281.
+#Out of all the customers who are partnered 21% bought KP781,34% bought KP481,45% bought KP281
